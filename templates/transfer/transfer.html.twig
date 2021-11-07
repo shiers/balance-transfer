@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% block title %}Transfers{% endblock %}
+{% block body %}
+    {{ form_errors(form) }}
+    <div class="container">
+        <div>
+            <div>
+                <a href="{{ path('default')}}">Return to the Main Screen</a>
+            </div>
+            <div>
+                <h2>{{ customer.name }}'s Money Transfer</h2>
+            </div>
+            <div>
+                Balance: ${{ customer.balance|number_format(2) }}
+            </div>
+        </div>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        {# You can replace  {{ form_start(form) }} with the line above to manually test server-side validation #}
+{#        {{ form_start(form) }} #}
+            {{ form_row(form.customerTo) }}
+            <div class="form-group">
+                {{ form_label(form.amount) }}
+                {% if customer.balance < 500 %}
+                    {{ form_widget(form.amount, {'id': 'amount', 'type':'number', 'attr': {'max': customer.balance}}) }}
+                {% else %}
+                    {{ form_widget(form.amount, {'id': 'amount', 'type':'number', 'attr': {'max': 500}}) }}
+                {% endif %}
+            </div>
+
+        {{ form_rest(form) }}
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

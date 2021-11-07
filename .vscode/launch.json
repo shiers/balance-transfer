@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for XDebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/srv/app": "${workspaceFolder}",
+      }
+    },
+    {
+      "name": "Launch application",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/public/index.php",
+      "cwd": "${workspaceFolder}",
+      "port": 9003
+    },
+    {
+      "name": "Launch currently open script",
+      "type": "php",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${fileDirname}",
+      "port": 9003
+    }
+  ]
+}

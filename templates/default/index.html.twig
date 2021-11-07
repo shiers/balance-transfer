@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}App | Customers{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Customers</h1>
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col" class="text-end">Balance</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                    <tr>
+                        <th scope="row">
+                            {{ loop.index }}
+                        </th>
+                        <td>
+                            {{ customer.name }}
+                        </td>
+                        <td class="text-end">
+                            ${{ customer.balance|number_format(2) }}
+                        </td>
+                        <td>
+                            <a href="{{ path('transfer', { 'id': customer.id }) }}">
+                                <i class="bi bi-arrow-left-right"></i> Transfer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if transfers %}
+        <h1>Transfers</h1>
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Sender</th>
+                    <th scope="col">Recipient</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            {% for transfer in transfers %}
+                <tr>
+                    <td>
+                        {{ transfer.date|date("h:i:s d M Y") }}
+                    </td>
+                    <td>
+                        ${{ transfer.amount|number_format(2) }}
+                    </td>
+                    <td>
+                        {{ transfer.customerFrom }}
+                    </td>
+                    <td>
+                        {{ transfer.customerTo }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+{% endblock %}

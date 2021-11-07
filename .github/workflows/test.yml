@@ -1,0 +1,52 @@
+name: Test
+
+on: [push]
+
+env:
+  APP_ENV: test
+  DATABASE_URL: mysql://root:symfony@127.0.0.1:13306/app?serverVersion=8.0"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      database:
+        image: mysql/mysql-server:8.0
+        env:
+          MYSQL_DATABASE: app
+          MYSQL_USER: symfony
+          MYSQL_PASSWORD: symfony
+          MYSQL_ROOT_PASSWORD: symfony
+          MYSQL_ROOT_HOST: '%'
+        ports:
+          - 13306:3306
+        options: >-
+          --memory=2g
+          --health-cmd="mysqladmin --password=${MYSQL_ROOT_PASSWORD} ping"
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+      - name: Install Composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: 8.0
+          version: 2
+      - name: Create test database
+        run: php bin/console --env=test doctrine:database:create --no-interaction
+      - name: Run database migrations
+        run: php bin/console --env=test doctrine:migrations:migrate --no-interaction
+      - name: Create database fixtures
+        run: php bin/console --env=test doctrine:fixtures:load --no-interaction
+      - name: Run PHPUnit tests
+        uses: php-actions/phpunit@v3
+        with:
+          php_version: 8.0
+          version: 9.5
+          php_extensions: mysqli pdo pdo_mysql

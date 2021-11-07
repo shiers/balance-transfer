@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  symfony:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    ports:
+      - '8000:8000'
+    depends_on:
+      - database
+    volumes:
+      - .:/srv/app:cached
+
+  database:
+    image: mysql/mysql-server:8.0
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-app}
+      MYSQL_USER: ${MYSQL_USER:-symfony}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-symfony}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-symfony}
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - '13306:3306'
+    volumes:
+      - db-data:/var/lib/mysql:rw
+
+volumes:
+  db-data:
+    driver: local

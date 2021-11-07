@@ -1,0 +1,21 @@
+{
+  "php.suggest.basic": false,
+  "twig-language-2.bracePadding": true,
+  "twig-language-2.elseLine": true,
+  "twig-language-2.indentLevel": 4,
+  "twig-language-2.indentStyle": "space",
+  "intelephense.environment.documentRoot": "public/",
+  "intelephense.files.exclude": [
+    "**/.git/**",
+    "**/.svn/**",
+    "**/.hg/**",
+    "**/CVS/**",
+    "**/.DS_Store/**",
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**/{Tests,tests}/**",
+    "**/.history/**",
+    "**/vendor/**/vendor/**",
+    "**/var/**"
+  ]
+}
