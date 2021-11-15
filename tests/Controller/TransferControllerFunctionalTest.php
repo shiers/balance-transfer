@@ -7,6 +7,8 @@
 namespace App\Tests\Controller;
 
 
+use App\Entity\Customer;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\AbstractBrowser;
@@ -15,6 +17,27 @@ use Symfony\Component\DomCrawler\Form;
 
 class TransferControllerFunctionalTest extends WebTestCase
 {
+    protected static $static_em;
+    protected static $repository;
+
+    protected EntityManager $em;
+
+    protected function setUp(): void
+    {
+        $this->em = self::$static_em;
+    }
+
+    public static function setUpBeforeClass(): void
+    {
+        static::ensureKernelShutdown();
+        $em = static::createClient()->getContainer()->get('doctrine')->getManager();
+        self::$static_em = $em;
+
+        parent::setUpBeforeClass();
+
+        self::ensureKernelShutdown();
+    }
+
     protected function getForm(Crawler $crawler): Form
     {
         return $crawler->selectButton('form_transfer[submit]')->form();
@@ -25,6 +48,26 @@ class TransferControllerFunctionalTest extends WebTestCase
         return static::createClient();
     }
 
+    protected function getCustomerWithBalance()
+    {
+        /** @var Customer $customer */
+        return $this->em->createQuery(
+            "SELECT c FROM App:Customer c ORDER BY c.id ASC")
+            ->setMaxResults(1)
+            ->getSingleResult();
+    }
+
+    protected function getCustomerWithZeroBalance()
+    {
+        /** @var Customer $customer */
+        $customer = $this->em->createQuery(
+            "SELECT c FROM App:Customer c WHERE c.balance = 0 ORDER BY c.id ASC")
+            ->setMaxResults(1)
+            ->getResult();
+
+        return $customer[0];
+    }
+
     public function testTransferPage(): void
     {
         $client = $this->getClient();
@@ -32,7 +75,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $client->request('GET', '/transfer/1');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithBalance();
+        $id = $customer->getId();
+
+        $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
@@ -50,7 +97,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $crawler = $client->request('GET', '/transfer/1');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithBalance();
+        $id = $customer->getId();
+
+        $crawler = $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
@@ -74,7 +125,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $crawler = $client->request('GET', '/transfer/1');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithBalance();
+        $id = $customer->getId();
+
+        $crawler = $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
@@ -98,7 +153,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $crawler = $client->request('GET', '/transfer/1');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithBalance();
+        $id = $customer->getId();
+
+        $crawler = $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
@@ -125,7 +184,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $crawler = $client->request('GET', '/transfer/7');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithZeroBalance();
+        $id = $customer->getId();
+
+        $crawler = $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
@@ -152,7 +215,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $crawler = $client->request('GET', '/transfer/1');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithBalance();
+        $id = $customer->getId();
+
+        $crawler = $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
@@ -180,7 +247,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $crawler = $client->request('GET', '/transfer/1');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithBalance();
+        $id = $customer->getId();
+
+        $crawler = $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
@@ -207,7 +278,11 @@ class TransferControllerFunctionalTest extends WebTestCase
         // Enable followRedirects to handle various redirects
         $client->followRedirects(true);
 
-        $crawler = $client->request('GET', '/transfer/1');
+        /** @var Customer $customer */
+        $customer = $this->getCustomerWithBalance();
+        $id = $customer->getId();
+
+        $crawler = $client->request('GET', '/transfer/'.$id);
 
         // Assert that the Submit transfer button is on the page
         $this->assertSubmitButtonPresent($client);
