@@ -65,5 +65,5 @@ To run the test suite in your workspace, follow these steps:
    ```
 4. Run the tests:
    ```sh
-   php ./vendor/bin/phpunit
+   php ./vendor/bin/phpunit tests/
    ```
