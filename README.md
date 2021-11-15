@@ -10,7 +10,11 @@ The application can be run on your local machine using [Docker](https://www.dock
    ```sh
    docker compose up -d
    ```
-4. Run database migrations:
+4. Run database migrations from the php container:
+   ```sh
+   command docker exec -it balance-transfer-symfony-1 /bin/bash
+   ````
+   then
    ```sh
    php bin/console doctrine:migrations:migrate
    ```
@@ -39,11 +43,15 @@ You can access the application database using a MySQL client with the following 
 ----
 
 ## Testing
-[PHPUnit](https://phpunit.readthedocs.io/en/9.5/) unit tests, functional tests and application tests are located in the `tests/` directory. The test suite will be automatically run on each commit when pushed to GitHub.
+[PHPUnit](https://phpunit.readthedocs.io/en/9.5/) unit tests, functional tests and application tests are located in the `tests/` directory.
 
 To run the test suite in your workspace, follow these steps:
 
-1. Create the test database:
+1. Create the test database (if not already created) from the php container :
+   ```sh
+   command docker exec -it balance-transfer-symfony-1 /bin/bash
+   ````
+   then
    ```sh
    php bin/console --env=test doctrine:database:create
    ```
