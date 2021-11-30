@@ -81,6 +81,7 @@ class TransferController extends AbstractController
         return $this->render('transfer/transfer.html.twig', $data);
     }
 
+    /** @phpstan-ignore-next-line */
     #[ArrayShape(['message' => "string", 'type' => "string"])]
     public function processTransfer($formData, $transferSenderId): array
     {
@@ -163,6 +164,7 @@ class TransferController extends AbstractController
         return $response;
     }
 
+    /** @phpstan-ignore-next-line */
     #[ArrayShape(['message' => "string", 'type' => "string"])]
     private function setResponseMessage(string $type, string $message): array
     {
