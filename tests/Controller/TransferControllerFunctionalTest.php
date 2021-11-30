@@ -50,7 +50,6 @@ class TransferControllerFunctionalTest extends WebTestCase
 
     protected function getCustomerWithBalance()
     {
-        /** @var Customer $customer */
         return $this->em->createQuery(
             "SELECT c FROM App:Customer c ORDER BY c.id ASC")
             ->setMaxResults(1)
@@ -111,7 +110,7 @@ class TransferControllerFunctionalTest extends WebTestCase
 
         $form = $this->getForm($crawler);
 
-        $form['form_transfer[amount]'] = 10;
+        $form['form_transfer[amount]'] = '10';
 
         $client->submit($form);
 
@@ -198,7 +197,7 @@ class TransferControllerFunctionalTest extends WebTestCase
 
         $form = $this->getForm($crawler);
 
-        $form['form_transfer[amount]'] = 500;
+        $form['form_transfer[amount]'] = '500';
 
         $client->submit($form);
 
@@ -229,7 +228,7 @@ class TransferControllerFunctionalTest extends WebTestCase
 
         $form = $this->getForm($crawler);
 
-        $form['form_transfer[amount]'] = 500;
+        $form['form_transfer[amount]'] = '500';
 
         $client->submit($form);
 
@@ -261,7 +260,7 @@ class TransferControllerFunctionalTest extends WebTestCase
 
         $form = $this->getForm($crawler);
 
-        $form['form_transfer[amount]'] = 1000;
+        $form['form_transfer[amount]'] = '1000';
 
         $client->submit($form);
 
@@ -292,7 +291,7 @@ class TransferControllerFunctionalTest extends WebTestCase
 
         $form = $this->getForm($crawler);
 
-        $form['form_transfer[amount]'] = -1;
+        $form['form_transfer[amount]'] = '-1';
 
         $client->submit($form);
 

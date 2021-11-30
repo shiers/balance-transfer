@@ -11,8 +11,7 @@ use App\Controller\TransferController;
 use App\Entity\Customer;
 use App\Entity\Transfer;
 use App\Repository\CustomerRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -20,7 +19,7 @@ class TransferControllerUnitTest extends WebTestCase
 {
     protected static $static_em;
 
-    protected ObjectManager $em;
+    protected EntityManager $em;
 
     protected function setUp(): void
     {
