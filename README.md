@@ -12,7 +12,7 @@ The application can be run on your local machine using [Docker](https://www.dock
    ```
 4. Run database migrations from the php container:
    ```sh
-   command docker exec -it balance-transfer-symfony-1 /bin/bash
+   command docker exec -it balance-transfer_symfony_1 /bin/bash
    ````
    then
    ```sh
@@ -49,7 +49,7 @@ To run the test suite in your workspace, follow these steps:
 
 1. Create the test database (if not already created) from the php container :
    ```sh
-   command docker exec -it balance-transfer-symfony-1 /bin/bash
+   command docker exec -it balance-transfer_symfony_1 /bin/bash
    ````
    then
    ```sh
