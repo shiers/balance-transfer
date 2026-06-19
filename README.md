@@ -1,27 +1,26 @@
 ## Run locally using Docker
-The application can be run on your local machine using [Docker](https://www.docker.com/products/docker-desktop). You will need to have PHP 8.0 and [Composer](https://getcomposer.org/download/) installed.
+
+The application can be run on your local machine using [Docker](https://www.docker.com/products/docker-desktop). You only need Docker Desktop installed — PHP and Composer run inside the container.
 
 1. Clone the git repository to your local machine.
-2. Install dependencies:
-   ```sh
-   composer install
-   ```
-3. Start the containers:
+2. Start the containers:
    ```sh
    docker compose up -d
    ```
-4. Run database migrations from the php container:
+3. Run database migrations from the php container:
    ```sh
-   command docker exec -it balance-transfer_symfony_1 /bin/bash
-   ````
+   docker exec -it balance-transfer-symfony-1 /bin/bash
+   ```
    then
    ```sh
    php bin/console doctrine:migrations:migrate
    ```
-5. Load database fixtures:
+4. Load database fixtures:
    ```sh
    php bin/console doctrine:fixtures:load
    ```
+
+> **Note:** If using VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension, you can open this project with "Reopen in Container". The `post-create.sh` script will automatically install dependencies, run migrations, and load fixtures.
 
 #### Application URL
 When running locally, the development URL for your application will be:
@@ -35,7 +34,7 @@ You can access the application database using a MySQL client with the following 
 | Parameter     | Value               |
 |---------------|---------------------|
 | Hostname      | `127.0.0.1`         |
-| Port          | `13306`              |
+| Port          | `13306`             |
 | User          | `symfony` or `root` |
 | Password      | `symfony`           |
 | Database Name | `app`               |
@@ -45,13 +44,14 @@ You can access the application database using a MySQL client with the following 
 ## Testing
 [PHPUnit](https://phpunit.readthedocs.io/en/9.5/) unit tests, functional tests and application tests are located in the `tests/` directory.
 
-To run the test suite in your workspace, follow these steps:
+To run the test suite, exec into the php container first:
+```sh
+docker exec -it balance-transfer-symfony-1 /bin/bash
+```
 
-1. Create the test database (if not already created) from the php container :
-   ```sh
-   command docker exec -it balance-transfer_symfony_1 /bin/bash
-   ````
-   then
+Then follow these steps:
+
+1. Create the test database (if not already created):
    ```sh
    php bin/console --env=test doctrine:database:create
    ```
