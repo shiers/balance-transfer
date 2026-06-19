@@ -6,18 +6,14 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    watch: {
-      usePolling: true,
-      interval: 1000,
-    },
     proxy: {
       '/api': {
-        target: 'http://symfony:8000',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
     },
   },
-  optimizeDeps: {
-    include: ['vue', 'vue-router', 'axios'],
+  build: {
+    outDir: 'dist',
   },
 })

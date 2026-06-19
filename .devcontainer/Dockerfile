@@ -1,8 +1,22 @@
+FROM node:20-alpine AS frontend-build
+
+WORKDIR /build
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
+
+# ---
+
 FROM php:8.0-fpm
 
 # Install system packages
 RUN apt-get update \
-    && apt-get -y install git nano procps unzip default-mysql-client nginx supervisor
+    && apt-get -y install git nano procps unzip default-mysql-client nginx supervisor curl
+
+# Install Node.js 20 for frontend builds
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Install 'retry' script
 RUN curl https://raw.githubusercontent.com/kadwanev/retry/0b65e6b7f54ed36b492910470157e180bbcc3c84/retry -o /usr/local/bin/retry \
@@ -24,13 +38,16 @@ RUN curl -sSL https://getcomposer.org/download/2.2.24/composer.phar -o /usr/loca
 # Install Symfony CLI
 RUN curl -sSL https://get.symfony.com/cli/installer | bash -s -- --install-dir=/usr/local/bin
 
-# Create workspace directory (application code should be attached here using a bind mount)
+# Create workspace directory
 RUN mkdir /srv/app
 WORKDIR /srv/app
 
-# Install dependencies (this will populate the ~/.composer/cache for faster installs later)
+# Install PHP dependencies
 COPY composer.json composer.lock ./
 RUN composer install --no-scripts
+
+# Copy Vue frontend build output
+COPY --from=frontend-build /build/dist /srv/app/frontend/dist
 
 # Add project specific nginx config
 COPY .devcontainer/nginx.conf /etc/nginx/nginx.conf
