@@ -17,10 +17,9 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql \
 RUN echo "xdebug.mode=develop" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-# Install composer
-RUN curl -sSL https://getcomposer.org/installer | php \
-    && chmod +x composer.phar \
-    && mv composer.phar /usr/local/bin/composer
+# Install composer (pinned to 2.2 LTS for compatibility with symfony/flex v1.x)
+RUN curl -sSL https://getcomposer.org/download/2.2.24/composer.phar -o /usr/local/bin/composer \
+    && chmod +x /usr/local/bin/composer
 
 # Install Symfony CLI
 RUN curl -sSL https://get.symfony.com/cli/installer | bash -s -- --install-dir=/usr/local/bin
@@ -55,4 +54,5 @@ RUN echo "net.core.somaxconn=65536" >> /etc/sysctl.conf
 
 # Run entrypoint script
 COPY .devcontainer/docker-start.sh /srv/start.sh
+RUN sed -i 's/\r$//' /srv/start.sh && chmod +x /srv/start.sh
 CMD ["/srv/start.sh"]
