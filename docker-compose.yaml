@@ -10,6 +10,18 @@ services:
     volumes:
       - .:/srv/app:cached
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '5173:5173'
+    depends_on:
+      - symfony
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
   database:
     image: mysql/mysql-server:8.0
     environment:
