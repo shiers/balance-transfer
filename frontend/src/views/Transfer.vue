@@ -6,7 +6,7 @@
       </router-link>
     </div>
 
-    <div v-if="loading" class="text-gray-500">Loading...</div>
+    <div v-if="!customer" class="text-gray-500">Loading...</div>
 
     <div v-else class="bg-white rounded-lg shadow p-6 max-w-lg">
       <h2 class="text-2xl font-semibold text-gray-800 mb-2">
@@ -73,29 +73,28 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
+import store, { loadData, getCustomer, refreshData } from '../store'
 
 const emit = defineEmits(['notify'])
 const route = useRoute()
 const router = useRouter()
 
-const customer = ref({})
-const customers = ref([])
+const customer = ref(null)
 const recipientId = ref('')
 const amount = ref(null)
-const loading = ref(true)
 const submitting = ref(false)
 
 const recipients = computed(() => {
-  return customers.value.filter(c => c.id !== customer.value.id)
+  return store.customers.filter(c => c.id !== customer.value?.id)
 })
 
 const maxTransfer = computed(() => {
-  const balance = parseFloat(customer.value.balance) || 0
+  const balance = Number.parseFloat(customer.value?.balance) || 0
   return Math.min(balance, 500)
 })
 
 function formatBalance(value) {
-  return parseFloat(value).toFixed(2)
+  return Number.parseFloat(value).toFixed(2)
 }
 
 async function submitTransfer() {
@@ -107,6 +106,8 @@ async function submitTransfer() {
       amount.value
     )
     emit('notify', { type: 'success', message: response.data.message })
+    // Refresh data so balances are up-to-date when returning home
+    await refreshData()
     router.push('/')
   } catch (error) {
     const msg = error.response?.data?.message || 'An error occurred'
@@ -119,17 +120,17 @@ async function submitTransfer() {
 onMounted(async () => {
   try {
     const id = parseInt(route.params.id)
-    const [customerRes, customersRes] = await Promise.all([
-      api.getCustomer(id),
-      api.getCustomers(),
-    ])
-    customer.value = customerRes.data
-    customers.value = customersRes.data
+    // Ensure store is loaded (instant if already cached)
+    await loadData()
+    customer.value = getCustomer(id)
+
+    if (!customer.value) {
+      emit('notify', { type: 'error', message: 'Customer not found' })
+      router.push('/')
+    }
   } catch (error) {
     emit('notify', { type: 'error', message: 'Failed to load customer data' })
     router.push('/')
-  } finally {
-    loading.value = false
   }
 })
 </script>

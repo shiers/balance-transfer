@@ -23,13 +23,11 @@ RUN curl https://raw.githubusercontent.com/kadwanev/retry/0b65e6b7f54ed36b492910
     && chmod +x /usr/local/bin/retry
 
 # Install PHP extensions
-RUN docker-php-ext-install mysqli pdo pdo_mysql \
+RUN docker-php-ext-install mysqli pdo pdo_mysql opcache \
     && pecl install xdebug-3.1.1 \
     && docker-php-ext-enable pdo_mysql xdebug
 
-# Configure Xdebug
-RUN echo "xdebug.mode=develop" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# Xdebug and OPcache are configured at runtime by docker-start.sh based on APP_ENV
 
 # Install composer (pinned to 2.2 LTS for compatibility with symfony/flex v1.x)
 RUN curl -sSL https://getcomposer.org/download/2.2.24/composer.phar -o /usr/local/bin/composer \

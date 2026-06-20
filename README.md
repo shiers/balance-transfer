@@ -11,23 +11,60 @@ All services run in Docker. Port 8000 is the only port exposed.
 
 ---
 
-## Run locally using Docker
+## Quick Start
 
 You only need [Docker Desktop](https://www.docker.com/products/docker-desktop) installed.
 
 1. Clone the git repository to your local machine.
-2. Build the Vue frontend:
+2. Start the application:
+
+   **Windows:**
+   ```
+   start.bat
+   ```
+
+   **Linux / Mac:**
+   ```sh
+   chmod +x start.sh
+   ./start.sh
+   ```
+
+   This builds and starts in **prod mode** by default (OPcache enabled, Xdebug off, Symfony cache warmed).
+
+3. Open the application at `http://localhost:8000`
+
+#### Development Mode
+
+To run with dev-friendly settings (OPcache off, Xdebug in develop mode, file changes reflect immediately):
+
+**Windows:**
+```
+start.bat dev
+```
+
+**Linux / Mac:**
+```sh
+./start.sh dev
+```
+
+---
+
+## Manual Setup (alternative)
+
+If you prefer not to use the start scripts:
+
+1. Build the Vue frontend:
    ```sh
    cd frontend
    npm install
    npm run build
    cd ..
    ```
-3. Start the containers:
+2. Start the containers:
    ```sh
    docker compose up -d --build
    ```
-4. Run database migrations and load fixtures:
+3. Run database migrations and load fixtures:
    ```sh
    docker exec -it balance-transfer-symfony-1 /bin/bash
    ```
@@ -39,12 +76,22 @@ You only need [Docker Desktop](https://www.docker.com/products/docker-desktop) i
 
 > **Note:** If using VS Code with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension, you can open this project with "Reopen in Container". The `post-create.sh` script will automatically install dependencies, build the frontend, run migrations, and load fixtures.
 
-#### Application URL
-```
-http://localhost:8000
-```
+---
 
-#### API Endpoints
+## Environment Modes
+
+| Setting         | prod (default)                   | dev                              |
+|-----------------|----------------------------------|----------------------------------|
+| OPcache         | Enabled, no file revalidation    | Disabled                         |
+| Xdebug          | Completely removed               | Develop mode (nice error pages)  |
+| Symfony cache   | Pre-warmed at startup            | Built on first request           |
+| Performance     | Fast (sub-second responses)      | Slower (convenience over speed)  |
+
+The mode is controlled by the `APP_ENV` environment variable, which the start scripts set for you.
+
+---
+
+## API Endpoints
 
 | Method | Endpoint             | Description              |
 |--------|----------------------|--------------------------|
@@ -62,7 +109,10 @@ http://localhost:8000
 }
 ```
 
-#### Database
+---
+
+## Database
+
 You can access the application database using a MySQL client:
 
 | Parameter     | Value               |
@@ -100,6 +150,7 @@ This starts a dev server at `http://localhost:5173` with API requests proxied to
 ---
 
 ## Testing
+
 [PHPUnit](https://phpunit.readthedocs.io/en/9.5/) unit tests, functional tests and application tests are located in the `tests/` directory.
 
 To run the test suite, exec into the container first:

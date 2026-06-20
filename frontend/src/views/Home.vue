@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Customers</h2>
 
-    <div v-if="loading" class="text-gray-500">Loading...</div>
+    <div v-if="store.loading && !store.loaded" class="text-gray-500">Loading...</div>
 
     <div v-else class="overflow-x-auto">
       <table class="min-w-full bg-white rounded-lg shadow">
@@ -15,7 +15,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <tr v-for="(customer, index) in customers" :key="customer.id" class="hover:bg-gray-50">
+          <tr v-for="(customer, index) in store.customers" :key="customer.id" class="hover:bg-gray-50">
             <td class="px-6 py-4 text-sm text-gray-700">{{ index + 1 }}</td>
             <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ customer.name }}</td>
             <td class="px-6 py-4 text-sm text-gray-700 text-right">${{ formatBalance(customer.balance) }}</td>
@@ -32,7 +32,7 @@
       </table>
     </div>
 
-    <div v-if="transfers.length > 0" class="mt-10">
+    <div v-if="store.transfers.length > 0" class="mt-10">
       <h2 class="text-2xl font-semibold text-gray-800 mb-4">Transfers</h2>
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded-lg shadow">
@@ -45,7 +45,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
-            <tr v-for="transfer in transfers" :key="transfer.id" class="hover:bg-gray-50">
+            <tr v-for="transfer in store.transfers" :key="transfer.id" class="hover:bg-gray-50">
               <td class="px-6 py-4 text-sm text-gray-700">{{ formatDate(transfer.date) }}</td>
               <td class="px-6 py-4 text-sm text-gray-700 text-right">${{ formatBalance(transfer.amount) }}</td>
               <td class="px-6 py-4 text-sm text-gray-900">{{ transfer.customerFrom }}</td>
@@ -59,15 +59,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import api from '../api'
-
-const customers = ref([])
-const transfers = ref([])
-const loading = ref(true)
+import { onMounted } from 'vue'
+import store, { loadData } from '../store'
 
 function formatBalance(value) {
-  return parseFloat(value).toFixed(2)
+  return Number.parseFloat(value).toFixed(2)
 }
 
 function formatDate(dateString) {
@@ -75,18 +71,7 @@ function formatDate(dateString) {
   return date.toLocaleString()
 }
 
-onMounted(async () => {
-  try {
-    const [customersRes, transfersRes] = await Promise.all([
-      api.getCustomers(),
-      api.getTransfers(),
-    ])
-    customers.value = customersRes.data
-    transfers.value = transfersRes.data
-  } catch (error) {
-    console.error('Failed to load data:', error)
-  } finally {
-    loading.value = false
-  }
+onMounted(() => {
+  loadData()
 })
 </script>
