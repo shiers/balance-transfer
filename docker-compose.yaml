@@ -7,6 +7,8 @@ services:
       - '8000:8000'
     depends_on:
       - database
+    environment:
+      - APP_ENV=${APP_ENV:-prod}
     volumes:
       - .:/srv/app:cached
 
